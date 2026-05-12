@@ -1,0 +1,6 @@
+{
+  "name": "Inventory Flow",
+  "description": "A streamlined inventory management dashboard with local storage persistence and real-time filtering.",
+  "requestFramePermissions": [],
+  "majorCapabilities": []
+}
