@@ -196,10 +196,39 @@ export default function App() {
     return Object.entries(counts).sort((a, b) => b[1] - a[1]);
   }, [dailyLogs]);
 
-  const sendEmailReport = () => {
-    if (dailyLogs.length === 0) {
-      alert("No data to report yet. Commit some sales first!");
-      return;
+ const sendEmailReport = () => {
+  if (dailyLogs.length === 0) {
+    alert("No data to report yet. Commit some sales first!");
+    return;
+  }
+
+  // 1. Added prompt to typing the destination email
+  const recipient = window.prompt("Enter the email address you'd like to send this report to:", "example@gmail.com");
+  
+  // Exit if user cancels or leaves it blank
+  if (recipient === null) return;
+
+  const reportTitle = `REVENUE_REPORT_${new Date().toISOString().split('T')[0]}`;
+  let body = "DASHBOARD REVENUE STREAM SUMMARY\n";
+  body += "==================================\n\n";
+  
+  [...dailyLogs].sort((a, b) => b.date.localeCompare(a.date)).forEach(log => {
+    body += `PERIOD: ${log.date}\n`;
+    body += `REVENUE: ₱${log.totalRevenue.toLocaleString()}\n`;
+    body += `TRANSACTIONS: ${log.transactionsCount}\n`;
+    body += "INVENTORY FLOW:\n";
+    Object.entries(log.itemsSold).forEach(([name, qty]) => {
+      body += `  - ${name.toUpperCase()}: ${qty} units\n`;
+    });
+    body += "----------------------------------\n\n";
+  });
+
+  body += "\nGenerated via Vault Dashboard Control.";
+
+  // 2. Updated mailto link to include the 'recipient' variable
+  const mailtoUrl = `mailto:${recipient}?subject=${encodeURIComponent(reportTitle)}&body=${encodeURIComponent(body)}`;
+  window.location.href = mailtoUrl;
+};
     }
     
     const reportTitle = `Revenue Report - Generated ${new Date().toLocaleDateString()}`;
